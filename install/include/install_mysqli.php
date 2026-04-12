@@ -21,7 +21,12 @@ class dbstuff {
 	function connect($dbhost, $dbuser, $dbpw, $dbname = '', $dbcharset, $pconnect = 0, $tablepre='', $time = 0) {
 		$this->time = $time;
 		$this->tablepre = $tablepre;
-		$this->link = new mysqli();
+        try{
+            $this->link = new mysqli();
+        } catch (\mysqli_sql_exception $e) {
+            $this->halt('notconnect', $e->getMessage());
+        }
+
 		//兼容支持域名直接带有端口的情况
 		if(strpos($dbhost,':')!==false){
 			list($dbhost,$port)=explode(':',$dbhost);
@@ -35,16 +40,12 @@ class dbstuff {
 		if(!$this->link->real_connect($dbhost, $dbuser, $dbpw, $dbname, $port, $unix_socket, MYSQLI_CLIENT_COMPRESS)) {
 			$this->halt('Can not connect to MySQL server');
 		}
-
-		if($this->version() > '4.1') {
-			if($dbcharset) {
-				$this->link->set_charset($dbcharset);
-			}
-
-			if($this->version() > '5.0.1') {
-				$this->query("SET sql_mode=''");
-			}
-		}
+        if(floatval($this->version()) > 4.1) {
+            if(!empty($dbcharset)) $this->link->set_charset($dbcharset);
+            if(floatval($this->version()) > 5.1){
+                $this->query("SET sql_mode=''");
+            }
+        }
 	}
 
 	function fetch_array($query, $result_type = MYSQLI_ASSOC) {
@@ -135,7 +136,10 @@ class dbstuff {
 	}
 
 	function version() {
-		return $this->link->server_info;
+        if(empty($this->version)) {
+            $this->version = $this->curlink->server_info;
+        }
+        return $this->version;
 	}
 
 	function escape_string($str) {
