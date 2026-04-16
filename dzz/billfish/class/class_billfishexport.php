@@ -167,7 +167,12 @@ class billfishxport
             //如果标签表iid没有索引创建res_join_tag_iid_idx索引
             if (!in_array('res_join_tag_id', $indexarr)) {
                 $createsql = "CREATE INDEX res_join_tag_id ON bf_tag_join_file (file_id ASC )";
-                $this->db->query($createsql);
+
+                try {
+                    $this->db->query($createsql);
+                } catch (\Exception $e) {
+
+                }
             }
 
             //查询待导入文件数
@@ -183,7 +188,11 @@ class billfishxport
             //如果标签表iid没有索引创建res_join_tag_iid_idx索引
             if (!in_array('res_join_tag_id', $indexarr)) {
                 $createsql = "CREATE INDEX res_join_tag_id ON bf_tag_join_file (tag_id ASC )";
-                $this->db->query($createsql);
+                try {
+                    $this->db->query($createsql);
+                } catch (\Exception $e) {
+
+                }
             }
 
             //查询待导入文件数
@@ -199,7 +208,11 @@ class billfishxport
             //如果标签表iid没有索引创建res_join_tag_iid_idx索引
             if (!in_array('res_join_tag_iid', $indexarr)) {
                 $createsql = "CREATE INDEX res_join_tag_iid ON res_join_tag ( iid ASC )";
-                $this->db->query($createsql);
+                try {
+                    $this->db->query($createsql);
+                } catch (\Exception $e) {
+
+                }
             }
 
             //查询待导入文件数
@@ -1274,10 +1287,19 @@ class billfishxport
             if ($this->version < 30) {
                 //删除创建的索引
                 $sql = 'DROP INDEX res_join_tag_iid';
-                $this->db->query($sql);
+                try {
+                    $this->db->query($sql);
+                } catch (\Exception $e) {
+
+                }
+
             } else {
                 $sql = 'DROP INDEX res_join_tag_id';
-                $this->db->query($sql);
+                try {
+                    $this->db->query($sql);
+                } catch (\Exception $e) {
+
+                }
             }
 
 
