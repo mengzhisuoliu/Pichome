@@ -550,9 +550,9 @@ class image {
 					$im->readImage(realpath($this->target));
 				
 					$im->thumbnailImage($this->param['thumbwidth'], $this->param['thumbheight']);
-					$im->resizeImage($this->param['thumbwidth'], $this->param['thumbheight']);
+					$im->resizeImage($this->param['thumbwidth'], $this->param['thumbheight'], imagick::FILTER_LANCZOS, 1.0);
 					$im->setGravity(imagick::GRAVITY_CENTER );
-					$im->extentImage($this->param['thumbwidth'], $this->param['thumbheight']);
+					$im->extentImage($this->param['thumbwidth'], $this->param['thumbheight'],0,0);
 					if($this->imginfo['mime'] == 'image/png') {
 						$prefix='png:';
 					}elseif($this->imginfo['mime'] == 'image/gif') {
@@ -593,7 +593,7 @@ class image {
 					
 					$im->thumbnailImage($this->param['thumbwidth'], $this->param['thumbheight']);
 					$im->setGravity(imagick::GRAVITY_CENTER );
-					$im->extentImage($this->param['thumbwidth'], $this->param['thumbheight']);
+					$im->extentImage($this->param['thumbwidth'], $this->param['thumbheight'],0,0);
 					if($this->imginfo['mime'] == 'image/png') {
 						$prefix='png:';
 					}elseif($this->imginfo['mime'] == 'image/gif') {
