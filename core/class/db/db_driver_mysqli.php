@@ -125,7 +125,7 @@ class db_driver_mysqli
 		return $this->result($this->query($sql), 0);
 	}
 
-	public function query($sql, $silent = false, $unbuffered = false) {
+		public function query($sql, $silent = false, $unbuffered = false) {
 		if(defined('DZZ_DEBUG') && DZZ_DEBUG) {
 			$starttime = microtime(true);
 		}
@@ -139,11 +139,15 @@ class db_driver_mysqli
 		}
 
 		$resultmode = $unbuffered ? MYSQLI_USE_RESULT : MYSQLI_STORE_RESULT;
+        try {
+            $query = $this->curlink->query($sql, $resultmode);
+        } catch (\mysqli_sql_exception $e) {
 
-		if(!($query = $this->curlink->query($sql, $resultmode))) {
+        }
+		if(!$query) {
 			if(in_array($this->errno(), array(2006, 2013)) && substr($silent, 0, 5) != 'RETRY') {
 				$this->connect();
-				return $this->curlink->query($sql, 'RETRY'.$silent);
+				return $this->query($sql, 'RETRY'.($silent ? 'SILENT' : ''), $unbuffered);
 			}
 			if(!$silent) {
 				$this->halt($this->error(), $this->errno(), $sql);
